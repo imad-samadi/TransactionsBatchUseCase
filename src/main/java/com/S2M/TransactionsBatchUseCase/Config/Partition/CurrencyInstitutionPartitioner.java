@@ -1,4 +1,4 @@
-package com.S2M.TransactionsBatchUseCase.Config;
+package com.S2M.TransactionsBatchUseCase.Config.Partition;
 
 import com.S2M.TransactionsBatchUseCase.DTO.CurrencyInstitutionPair;
 import lombok.extern.slf4j.Slf4j;

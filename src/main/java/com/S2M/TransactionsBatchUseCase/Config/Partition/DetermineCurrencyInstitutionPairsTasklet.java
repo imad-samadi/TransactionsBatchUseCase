@@ -1,16 +1,12 @@
-package com.S2M.TransactionsBatchUseCase.Config;
+package com.S2M.TransactionsBatchUseCase.Config.Partition;
 
 import com.S2M.TransactionsBatchUseCase.DTO.CurrencyInstitutionPair;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.StepContribution;
-import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.util.HashSet;

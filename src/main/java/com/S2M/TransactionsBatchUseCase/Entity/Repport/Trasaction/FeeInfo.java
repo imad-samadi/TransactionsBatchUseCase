@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @ToString
 @Builder
 @Entity
-@Table(name = "TRANSACTION")
+@Table(name = "TX_FEE_INFO")
 public class FeeInfo {
 
     /** FeeInfo Entity Sequence Name. */
@@ -45,9 +45,11 @@ public class FeeInfo {
 
     /** The fee type. */
     @Column(name = "FEE_TYPE")
-    @Enumerated
     private String feeType;
 
     @Column(name = "INST_REF")
     public String institutionReference;
+
+    @Column(name = "TX_ID")
+    private Long transactionId;
 }

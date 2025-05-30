@@ -1,5 +1,7 @@
-package com.S2M.TransactionsBatchUseCase.Config;
+package com.S2M.TransactionsBatchUseCase.Config.Repport;
 
+import com.S2M.TransactionsBatchUseCase.Config.Partition.CurrencyInstitutionPartitioner;
+import com.S2M.TransactionsBatchUseCase.Config.Partition.DetermineCurrencyInstitutionPairsTasklet;
 import com.S2M.TransactionsBatchUseCase.DTO.CurrencyInstitutionPair;
 import com.S2M.TransactionsBatchUseCase.Entity.Repport.SettlementReport;
 import com.S2M.TransactionsBatchUseCase.Entity.Repport.Trasaction.Transaction;
@@ -21,7 +23,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;

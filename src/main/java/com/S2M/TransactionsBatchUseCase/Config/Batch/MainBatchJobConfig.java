@@ -1,4 +1,4 @@
-package com.S2M.TransactionsBatchUseCase.Config;
+package com.S2M.TransactionsBatchUseCase.Config.Batch;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -7,9 +7,10 @@ import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-
+@Configuration
 public class MainBatchJobConfig {
 
     @Bean
@@ -39,17 +40,25 @@ public class MainBatchJobConfig {
         return taskExecutor;
     }
 
-    @Bean
-    public Job walletActivityReportingJob(JobRepository jobRepository,
-                                          // Inject steps by their bean names (Spring automatically finds them from other @Configuration classes)
-                                          @Qualifier("determineWorkUnitsStep") Step determineWorkUnitsStep,
-                                          @Qualifier("generateAndSaveSettlementReportsManagerStep") Step generateAndSaveSettlementReportsManagerStep,
-                                          @Qualifier("aggregateReportsAndCreateWalletActivityManagerStep") Step aggregateReportsAndCreateWalletActivityManagerStep) {
+    @Bean("walletActivityReportingJob")
+    public Job walletActivityReportingJob(
+            JobRepository jobRepository,
+
+            @Qualifier("writeTransactionStep") Step writeTransactionStep,
+            @Qualifier("processFeeInfoFileStep") Step processFeeInfoFileStep,
+
+            @Qualifier("determineWorkUnitsStep") Step determineWorkUnitsStep,
+            @Qualifier("generateAndSaveSettlementReportsManagerStep") Step generateAndSaveSettlementReportsManagerStep,
+            @Qualifier("aggregateReportsAndCreateWalletActivityManagerStep") Step aggregateReportsAndCreateWalletActivityManagerStep
+    ) {
         return new JobBuilder("walletActivityReportingJob", jobRepository)
                 .incrementer(new RunIdIncrementer())
-                .start(determineWorkUnitsStep)
+                .start(writeTransactionStep)
+                .next(processFeeInfoFileStep)
+                .next(determineWorkUnitsStep)
                 .next(generateAndSaveSettlementReportsManagerStep)
                 .next(aggregateReportsAndCreateWalletActivityManagerStep)
+
                 .build();
     }
 }

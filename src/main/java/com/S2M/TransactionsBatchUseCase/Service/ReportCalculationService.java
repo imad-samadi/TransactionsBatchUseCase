@@ -7,10 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,8 +46,8 @@ public class ReportCalculationService {
 
         // Initialize report collections
         sr.setReportByTrxType(new ArrayList<>());
-        sr.setReportByInstitution(new ArrayList<>());
-        sr.setReportByInstitutionAndTrxTypeResponse(new ArrayList<>());
+        sr.setReportByInstitution(new HashSet<>());
+        sr.setReportByInstitutionAndTrxTypeResponse(new HashSet<>());
 
         // Build the overall (GlobalReport)
         GlobalReport globalReport = buildGlobalReport(institutionTransactions, currentInstitutionId, processingCurrency);

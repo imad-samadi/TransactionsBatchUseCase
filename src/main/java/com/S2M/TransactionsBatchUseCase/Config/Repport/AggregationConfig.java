@@ -1,5 +1,7 @@
-package com.S2M.TransactionsBatchUseCase.Config;
+package com.S2M.TransactionsBatchUseCase.Config.Repport;
 
+import com.S2M.TransactionsBatchUseCase.Config.Partition.CurrencyForAggregationPartitioner;
+import com.S2M.TransactionsBatchUseCase.Config.Partition.DetermineCurrencyInstitutionPairsTasklet;
 import com.S2M.TransactionsBatchUseCase.Entity.Repport.SettlementReport;
 import com.S2M.TransactionsBatchUseCase.Entity.Repport.WalletActivityReport;
 import com.S2M.TransactionsBatchUseCase.Processor.WalletActivityReportBuilderProcessor;
@@ -16,6 +18,7 @@ import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.builder.JpaItemWriterBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -23,7 +26,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-
+@Configuration
 public class AggregationConfig {
 
 

@@ -1,4 +1,4 @@
-package com.S2M.TransactionsBatchUseCase.Config;
+package com.S2M.TransactionsBatchUseCase.Config.Partition;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.partition.support.Partitioner;

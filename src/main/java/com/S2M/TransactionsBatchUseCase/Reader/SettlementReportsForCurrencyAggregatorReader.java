@@ -33,11 +33,15 @@ public class SettlementReportsForCurrencyAggregatorReader implements ItemReader<
         log.info("Reading SettlementReports for aggregation. SessionId: {}, Currency: {}", sessionId, aggregationCurrency);
         try {
 
-            String jpql = "SELECT sr FROM SettlementReport sr " +
+            // Fetch the main entity, the one-to-one globalReport, and ONE List (bag) collection.
+            // The other collections (now Sets) will be fetched eagerly if mapped as such,
+            // or you can add @BatchSize or @Fetch(FetchMode.SUBSELECT) to them in the entity.
+            String jpql = "SELECT DISTINCT sr FROM SettlementReport sr " + // Use DISTINCT to avoid duplicates from joins
                     "LEFT JOIN FETCH sr.globalReport gr " +
-                    "LEFT JOIN FETCH sr.reportByTrxType " +
-                    "LEFT JOIN FETCH sr.reportByInstitution " +
-                    "LEFT JOIN FETCH sr.reportByInstitutionAndTrxTypeResponse " +
+                    "LEFT JOIN FETCH sr.reportByTrxType " + // Fetching the 'List<ReportByTrxType>'
+                    // Do NOT explicitly fetch the 'Set<ReportByInstitution>' or 'Set<ReportByInstitutionAndTrxTypeResponse>' here.
+                    // If they are mapped as eager (e.g., with @LazyCollection(LazyCollectionOption.FALSE)),
+                    // Hibernate will fetch them. Using Set helps avoid the multiple bag issue.
                     "WHERE sr.sessionId = :sessionId " +
                     "AND gr.netSettlementCurren = :currency " +
                     "AND sr.walletActivityReport IS NULL";

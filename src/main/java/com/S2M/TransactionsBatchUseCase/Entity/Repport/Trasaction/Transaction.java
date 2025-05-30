@@ -24,7 +24,7 @@ public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = TX_SEQ)
     @SequenceGenerator(name = TX_SEQ, sequenceName = TX_SEQ, allocationSize = 1)
-    private Long id;
+    private Long id ;
 
     /** The cut off id. */
     @Column(name = "SESSION_ID", nullable = false)
@@ -35,7 +35,7 @@ public class Transaction {
     /** The fee info. */
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "TX_ID")
-    public Set<FeeInfo> feeInfo;
+    public Set<FeeInfo> feeInfo ;
 
     /** The institution id. */
     @Column(name = "DEBIT_INST_REF", nullable = false)

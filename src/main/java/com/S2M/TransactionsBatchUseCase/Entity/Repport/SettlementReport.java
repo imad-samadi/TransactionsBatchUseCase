@@ -11,7 +11,9 @@ import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -44,17 +46,19 @@ public class SettlementReport {
     private WalletActivityReport walletActivityReport;
 
 
+    // Keep this one as a List if its order is most important and you want to eager fetch it
     @OneToMany(mappedBy = "settlementReport", cascade = CascadeType.ALL, orphanRemoval = true)
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @LazyCollection(LazyCollectionOption.FALSE) // This makes it eager by default with Hibernate
     private List<ReportByTrxType> reportByTrxType;
 
+    // Change these to Set
     @OneToMany(mappedBy = "settlementReport", cascade = CascadeType.ALL, orphanRemoval = true)
     @LazyCollection(LazyCollectionOption.FALSE)
-    private List<ReportByInstitution> reportByInstitution;
+    private Set<ReportByInstitution> reportByInstitution = new HashSet<>(); // Initialize
 
     @OneToMany(mappedBy = "settlementReport", cascade = CascadeType.ALL, orphanRemoval = true)
     @LazyCollection(LazyCollectionOption.FALSE)
-    private List<ReportByInstitutionAndTrxType> reportByInstitutionAndTrxTypeResponse;
+    private Set<ReportByInstitutionAndTrxType> reportByInstitutionAndTrxTypeResponse = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "GLOBAL_REPORT_ID", referencedColumnName = "id")
