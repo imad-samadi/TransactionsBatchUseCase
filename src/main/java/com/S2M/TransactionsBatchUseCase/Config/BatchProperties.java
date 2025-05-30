@@ -41,11 +41,6 @@ public class BatchProperties {
 
 
 
-
-
-
-
-
     @Min(1)
     private int skipLimit = 10;
 
