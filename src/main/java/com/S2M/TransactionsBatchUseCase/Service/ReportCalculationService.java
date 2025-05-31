@@ -101,6 +101,11 @@ public class ReportCalculationService {
                 sr.getReportByInstitutionAndTrxTypeResponse().add(rbit);
             }
         }
+           sr.setFeeInfo(buildReportFeeInfos(
+                institutionTransactions,
+                currentInstitutionId,
+                sr
+        ));
 
         return sr;
     }
@@ -391,6 +396,27 @@ public class ReportCalculationService {
 
         return rbit;
     }
+
+     private List<ReportFeeInfo> buildReportFeeInfos(
+          List<Transaction> transactions,
+          String currentInstitutionId,
+          SettlementReport settlementReport
+  ) {
+      return transactions.stream()
+              .filter(tx -> tx.getFeeInfo() != null)
+              .flatMap(tx -> tx.getFeeInfo().stream())
+              .filter(fee -> currentInstitutionId.equals(fee.getInstitutionReference()))
+              .map(fee -> ReportFeeInfo.builder()
+                      .feeAmount(fee.getFeeAmount())
+                      .feeCode(fee.getFeeCode())
+                      .feeCurrency(fee.getFeeCurrency())
+                      .feeDescription(fee.getFeeDescription())
+                      .feeSign(fee.getFeeSign())
+                      .feeType(fee.getFeeType())
+                      .settlementReport(settlementReport)
+                      .build())
+              .collect(Collectors.toList());
+  }
 
 
 }

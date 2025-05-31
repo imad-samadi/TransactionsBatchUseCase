@@ -44,8 +44,8 @@ public class MainBatchJobConfig {
     public Job walletActivityReportingJob(
             JobRepository jobRepository,
 
-            @Qualifier("writeTransactionStep") Step writeTransactionStep,
-            @Qualifier("processFeeInfoFileStep") Step processFeeInfoFileStep,
+           // @Qualifier("writeTransactionStep") Step writeTransactionStep,
+          //  @Qualifier("processFeeInfoFileStep") Step processFeeInfoFileStep,
 
             @Qualifier("determineWorkUnitsStep") Step determineWorkUnitsStep,
             @Qualifier("generateAndSaveSettlementReportsManagerStep") Step generateAndSaveSettlementReportsManagerStep,
@@ -53,9 +53,9 @@ public class MainBatchJobConfig {
     ) {
         return new JobBuilder("walletActivityReportingJob", jobRepository)
                 .incrementer(new RunIdIncrementer())
-                .start(writeTransactionStep)
-                .next(processFeeInfoFileStep)
-                .next(determineWorkUnitsStep)
+               // .start(writeTransactionStep)
+               // .next(processFeeInfoFileStep)
+                .start(determineWorkUnitsStep)
                 .next(generateAndSaveSettlementReportsManagerStep)
                 .next(aggregateReportsAndCreateWalletActivityManagerStep)
 

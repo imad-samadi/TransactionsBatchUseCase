@@ -10,10 +10,7 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Getter
@@ -65,4 +62,7 @@ public class SettlementReport {
     private GlobalReport globalReport;
 
     //add the fees
+     @OneToMany(mappedBy = "settlementReport", cascade = CascadeType.ALL, orphanRemoval = true)
+        @LazyCollection(LazyCollectionOption.FALSE)
+        private List<ReportFeeInfo> feeInfo = new ArrayList<>();
 }
