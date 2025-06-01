@@ -1,10 +1,7 @@
 package com.S2M.TransactionsBatchUseCase.Config.CSV;
 import com.S2M.TransactionsBatchUseCase.Config.Batch.BatchProperties;
 import com.S2M.TransactionsBatchUseCase.Entity.Repport.Trasaction.FeeInfo;
-import com.S2M.TransactionsBatchUseCase.Listeners.LoggingSkipListener;
-import com.S2M.TransactionsBatchUseCase.Listeners.LoggingStepListener;
-import com.S2M.TransactionsBatchUseCase.Listeners.PerThreadCountingWriteListener;
-import com.S2M.TransactionsBatchUseCase.Listeners.SimpleChunkListener;
+import com.S2M.TransactionsBatchUseCase.Listeners.*;
 import com.S2M.TransactionsBatchUseCase.Writer.FeeInfoJdbcWriter;
 import com.S2M.TransactionsBatchUseCase.Reader.CSV.GenericCsvReaderFactory;
 import com.S2M.TransactionsBatchUseCase.Reader.CSV.Mapper.FeeInfoFileFieldSetMapper;
@@ -13,13 +10,16 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemStreamReader;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.batch.item.file.transform.LineTokenizer;
+import org.springframework.batch.item.support.SynchronizedItemStreamReader;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
@@ -29,6 +29,10 @@ import javax.sql.DataSource;
 public class FeeInfoFileReaderConfig {
 
     private final BatchProperties batchProperties;
+
+    private final TaskExecutor partitionTaskExecutor;
+
+
 
     @Bean
     @Qualifier("feeInfoFileTokenizer")
@@ -76,16 +80,28 @@ public class FeeInfoFileReaderConfig {
     @Bean("processFeeInfoFileStep")
     public Step processFeeInfoFileStep(JobRepository jobRepository,
                                        PlatformTransactionManager transactionManager,
-                                       @Qualifier("feeInfoFileReader") ItemReader<FeeInfo> feeInfoReader,
+                                       @Qualifier("feeInfoFileReader") ItemReader<FeeInfo> feeInfoFileReader,
+                                      // @Qualifier("threadSafeFeeInfoReader") ItemStreamReader<FeeInfo> feeInfoReader,
                                        FeeInfoJdbcWriter feeInfoWriter) {
         return new StepBuilder("processFeeInfoFileStep", jobRepository)
-                .<FeeInfo, FeeInfo>chunk(100, transactionManager)
-                .reader(feeInfoReader)
+                .<FeeInfo, FeeInfo>chunk(batchProperties.getCSVChunkSize(), transactionManager)
+                .reader(feeInfoFileReader)
                 .writer(feeInfoWriter)
                 .listener(new LoggingStepListener())
                 .listener(new LoggingSkipListener())
-                .listener(new PerThreadCountingWriteListener())
-                .listener(new SimpleChunkListener())
+                //.listener(new SimpleChunkListener())
+                .listener(new CSVWriteListener())
+                //.taskExecutor(partitionTaskExecutor)
                 .build();
+    }
+
+
+    @Bean
+    @Qualifier("threadSafeFeeInfoReader")
+    public SynchronizedItemStreamReader<FeeInfo> threadSafeFeeInfoReader(
+            @Qualifier("feeInfoFileReader") FlatFileItemReader<FeeInfo> delegateReader) {
+        SynchronizedItemStreamReader<FeeInfo> synchronizedReader = new SynchronizedItemStreamReader<>();
+        synchronizedReader.setDelegate(delegateReader);
+        return synchronizedReader;
     }
 }

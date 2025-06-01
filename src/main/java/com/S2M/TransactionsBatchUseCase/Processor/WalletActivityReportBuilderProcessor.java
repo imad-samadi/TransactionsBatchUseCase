@@ -29,7 +29,7 @@ public class WalletActivityReportBuilderProcessor implements ItemProcessor<List<
             log.debug("No SettlementReports to aggregate for WalletActivityReport (Currency: {})", aggregationCurrency);
             return null;
         }
-        log.info("Aggregating {} SettlementReports into WalletActivityReport for Currency: {}",
+        log.debug("Aggregating {} SettlementReports into WalletActivityReport for Currency: {}",
                 settlementReports.size(), aggregationCurrency);
 
         WalletActivityReport war = new WalletActivityReport();

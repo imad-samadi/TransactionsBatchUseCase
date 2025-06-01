@@ -25,79 +25,46 @@ public class MainBatchJobConfig {
 
     private final BatchProperties batchProperties;
 
-    @Bean//strategy 2
-    @StepScope //each partitioned step gets its own isolated thread pool
-    public TaskExecutor partitionTaskExecutor(
-            @Value("${spring.datasource.hikari.maximum-pool-size:20}") int hikariMaxConnections
-    ) {
-        ThreadPoolTaskExecutor exec = new ThreadPoolTaskExecutor();
 
-        int cpuCores = Runtime.getRuntime().availableProcessors();
-        log.info("cpuCores: {}", cpuCores);
-        int corePool = cpuCores;
-        int maxPool  = Math.min(hikariMaxConnections, cpuCores * 2);
-
-        exec.setCorePoolSize(corePool);          // e.g. 8 on an 8-core box
-        log.info("corePool: {}", corePool);
-        exec.setMaxPoolSize(maxPool);            // e.g. min(20,16) = 16 if Hikari=20
-        log.info("maxPool: {}", maxPool);
-
-        //10-slot queue so that after 16 active threads, up to 10 more tasks wait here
-        exec.setQueueCapacity(10);
-
-        exec.setThreadNamePrefix("partition-worker-");
-        exec.setAllowCoreThreadTimeOut(true);
-        exec.setKeepAliveSeconds(15);
-        exec.setWaitForTasksToCompleteOnShutdown(false);
-
-        // don’t block JVM exit
-        exec.setThreadFactory(r -> {
-            Thread t = new Thread(r);
-            t.setDaemon(true);
-            return t;
-        });
-
-        exec.initialize();
-        return exec;
-    }
+   @Bean
+   public TaskExecutor partitionTaskExecutor(@Value("${spring.datasource.hikari.maximum-pool-size}") int hikariMaxConnections) {
+       ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
 
 
+       int systemCapacityMaxThreads = Runtime.getRuntime().availableProcessors() ;
 
-    /*@Bean strategy 1 :
-    public TaskExecutor partitionTaskExecutor(
-            @Value("${spring.datasource.hikari.maximum-pool-size:20}") int hikariMax
-    ) {
-        ThreadPoolTaskExecutor exec = new ThreadPoolTaskExecutor();
-        int cpuCores = Runtime.getRuntime().availableProcessors();
-        int corePool = cpuCores;
-        int maxPool  = Math.min(hikariMax, cpuCores * 2);
+       log.info("systemCapacityMaxThreads: {}", systemCapacityMaxThreads);
 
-        exec.setCorePoolSize(corePool);     // e.g. 8
-        exec.setMaxPoolSize(maxPool);       // e.g. 16
-        exec.setQueueCapacity(0);
+       log.info("hikariMaxConnections {}", hikariMaxConnections);
 
-        // CallerRunsPolicy:
-        exec.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
 
-        exec.setThreadNamePrefix("partition-worker-");
-        exec.setAllowCoreThreadTimeOut(true);
-        exec.setKeepAliveSeconds(15);
-        exec.setWaitForTasksToCompleteOnShutdown(false);
-        exec.setThreadFactory(r -> {
-            Thread t = new Thread(r);
-            t.setDaemon(true);
-            return t;
-        });
-        exec.initialize();
-        return exec;
-    }*/
+       taskExecutor.setMaxPoolSize(systemCapacityMaxThreads);
+
+       taskExecutor.setCorePoolSize(Math.min(hikariMaxConnections-1, systemCapacityMaxThreads));
+
+       log.info("CorePoolSize : {}", Math.min(hikariMaxConnections-1, systemCapacityMaxThreads));
+
+       // Queue capacity: How many tasks can wait if all maxPoolSize threads are busy.
+       // A larger queue allows more partitions to be generated and queued up by the partitioner
+       // without overwhelming the immediate thread pool.
+       taskExecutor.setQueueCapacity(systemCapacityMaxThreads * 5); // e.g., 16 * 5 = 80
+
+
+       taskExecutor.setThreadNamePrefix("partition-worker-");
+       taskExecutor.setAllowCoreThreadTimeOut(true); // Allow core threads to terminate if idle for too long
+       taskExecutor.setKeepAliveSeconds(60);       // How long core threads can be idle before terminating
+       taskExecutor.initialize();
+       return taskExecutor;
+   }
+
+   
 
     @Bean("walletActivityReportingJob")
     public Job walletActivityReportingJob(
             JobRepository jobRepository,
 
-           // @Qualifier("writeTransactionStep") Step writeTransactionStep,
-          //  @Qualifier("processFeeInfoFileStep") Step processFeeInfoFileStep,
+            @Qualifier("writeTransactionStep") Step writeTransactionStep,
+            @Qualifier("processFeeInfoFileStep") Step processFeeInfoFileStep,
 
             @Qualifier("determineWorkUnitsStep") Step determineWorkUnitsStep,
             @Qualifier("generateAndSaveSettlementReportsManagerStep") Step generateAndSaveSettlementReportsManagerStep,
@@ -105,9 +72,9 @@ public class MainBatchJobConfig {
     ) {
         return new JobBuilder("walletActivityReportingJob", jobRepository)
                 .incrementer(new RunIdIncrementer())
-               // .start(writeTransactionStep)
-               // .next(processFeeInfoFileStep)
-                .start(determineWorkUnitsStep)
+                .start(writeTransactionStep)
+                .next(processFeeInfoFileStep)
+                .next(determineWorkUnitsStep)
                 .next(generateAndSaveSettlementReportsManagerStep)
                 .next(aggregateReportsAndCreateWalletActivityManagerStep)
                 .listener(new LoggingJobListener())

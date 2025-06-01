@@ -74,8 +74,7 @@ public class AggregationConfig {
                 .reader(settlementReportsForCurrencyAggregatorReader)
                 .processor(walletActivityReportBuilderProcessor)
                 .writer(walletActivityReportWriter)
-                .listener(new LoggingStepListener())
-                .listener(new LoggingSkipListener())
+                //.listener(new LoggingStepListener())
                 .listener(new WalletActivityReportWriteListener())
 
                 .build();

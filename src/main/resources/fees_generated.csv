@@ -8,4 +8,4 @@ feeAmount,feeCode,feeCurrency,feeDescription,feeSign,feeType,institutionReferenc
 4.00,FEE07,USD,Fee for tx 7,D,PROCESSING,BANK04,7
 2.63,FEE08,USD,Fee for tx 8,D,NETWORK,BANK01,8
 4.01,FEE09,USD,Fee for tx 9,C,STANDARD,BANK03,9
-3.12,FEE10,USD,Fee for tx 10,D,STANDARD,BANK05,10
+3.12,FEE10,EUR,Fee for tx 10,D,STANDARD,BANK05,10

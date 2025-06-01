@@ -128,10 +128,8 @@ public class SettlementReportBatchConfig {
                 .reader(transactionsForInstitutionCurrencyReader)
                 .processor(settlementReportGeneratorProcessor)
                 .writer(settlementReportWriter)
-                .listener(new LoggingStepListener())
-                .listener(new LoggingSkipListener())
+                //.listener(new LoggingStepListener())
                 .listener(new PerThreadCountingWriteListener())
-
                 .build();
     }
 
