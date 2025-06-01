@@ -7,6 +7,7 @@ import com.S2M.TransactionsBatchUseCase.Entity.Repport.SettlementReport;
 import com.S2M.TransactionsBatchUseCase.Entity.Repport.Trasaction.Transaction;
 import com.S2M.TransactionsBatchUseCase.Processor.SettlementReportGeneratorProcessor;
 import com.S2M.TransactionsBatchUseCase.Reader.TransactionsForInstitutionCurrencyReader;
+import com.S2M.TransactionsBatchUseCase.Repo.SettlementReportRepository;
 import com.S2M.TransactionsBatchUseCase.Service.ReportCalculationService;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.batch.core.Step;
@@ -16,6 +17,8 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.data.RepositoryItemWriter;
+import org.springframework.batch.item.data.builder.RepositoryItemWriterBuilder;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.builder.JpaItemWriterBuilder;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -88,16 +91,19 @@ public class SettlementReportBatchConfig {
     }
 
     @Bean
-    public JpaItemWriter<SettlementReport> settlementReportWriter(EntityManagerFactory entityManagerFactory) { // Autowired
-        return new JpaItemWriterBuilder<SettlementReport>()
-                .entityManagerFactory(entityManagerFactory)
+    public RepositoryItemWriter<SettlementReport> settlementReportWriter(
+            SettlementReportRepository settlementReportRepository
+    ) {
+        return new RepositoryItemWriterBuilder<SettlementReport>()
+                .repository(settlementReportRepository)
+                .methodName("save")
                 .build();
     }
 
     @Bean
     public Step generateAndSaveSettlementReportsManagerStep(JobRepository jobRepository,
-                                                            Partitioner currencyInstitutionPartitioner, // From this config class
-                                                            @Qualifier("workerSettlementReportStep") Step workerSettlementReportStep,       // From this config class
+                                                            Partitioner currencyInstitutionPartitioner,
+                                                            @Qualifier("workerSettlementReportStep") Step workerSettlementReportStep,
                                                             TaskExecutor partitionTaskExecutor) {    // From MainBatchJobConfig
         return new StepBuilder("generateAndSaveSettlementReportsManagerStep", jobRepository)
                 .partitioner("workerSettlementReportStep", currencyInstitutionPartitioner)
@@ -110,9 +116,9 @@ public class SettlementReportBatchConfig {
     @Bean("workerSettlementReportStep")
     public Step workerSettlementReportStep(JobRepository jobRepository,
                                            PlatformTransactionManager transactionManager,
-                                           ItemReader<List<Transaction>> transactionsForInstitutionCurrencyReader, // From this config
-                                           ItemProcessor<List<Transaction>, SettlementReport> settlementReportGeneratorProcessor, // From this config
-                                           JpaItemWriter<SettlementReport> settlementReportWriter) { // From this config
+                                           ItemReader<List<Transaction>> transactionsForInstitutionCurrencyReader,
+                                           ItemProcessor<List<Transaction>, SettlementReport> settlementReportGeneratorProcessor,
+                                           RepositoryItemWriter<SettlementReport> settlementReportWriter) {
         return new StepBuilder("workerSettlementReportStep", jobRepository)
                 .<List<Transaction>, SettlementReport>chunk(1, transactionManager)
                 .reader(transactionsForInstitutionCurrencyReader)

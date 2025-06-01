@@ -39,7 +39,7 @@ public class SettlementReport {
     // Link to parent WalletActivityReport
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "W_ACTIVITY_REPORT_ID")
-    @ToString.Exclude // Avoid circular toString
+    @ToString.Exclude
     private WalletActivityReport walletActivityReport;
 
 
