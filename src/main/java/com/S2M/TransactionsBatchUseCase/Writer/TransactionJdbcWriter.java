@@ -1,10 +1,6 @@
 package com.S2M.TransactionsBatchUseCase.Writer;
 
 import com.S2M.TransactionsBatchUseCase.Entity.Repport.Trasaction.Transaction;
-import lombok.RequiredArgsConstructor;
-import org.springframework.batch.item.ItemWriter;
-
-import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
@@ -13,12 +9,10 @@ import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilde
 
 import javax.sql.DataSource;
 
-
-@RequiredArgsConstructor
-public class TransactionJdbcWriter  implements ItemWriter<Transaction> {
+public class TransactionJdbcWriter implements ItemWriter<Transaction> {
 
     private final DataSource dataSource;
-
+    private final ThreadLocal<JdbcBatchItemWriter<Transaction>> threadLocalWriter = new ThreadLocal<>();
 
     private static final String INSERT_TRANSACTION_SQL =
             "INSERT INTO TRANSACTION (" +
@@ -33,28 +27,30 @@ public class TransactionJdbcWriter  implements ItemWriter<Transaction> {
                     "   :dphReference, :hostReference, :agreementReference, :debitorPhoneNumber" +
                     ")";
 
-    private JdbcBatchItemWriter<Transaction> delegate;
+    public TransactionJdbcWriter(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
-    /**
-     * Initializes the delegate JdbcBatchItemWriter if it hasn't been already.
-     * This method is called before the first write operation.
-     */
-    private void initDelegate() {
-        if (delegate == null) {
-            delegate = new JdbcBatchItemWriterBuilder<Transaction>()
-                    .dataSource(this.dataSource)
+    private JdbcBatchItemWriter<Transaction> getWriter() {
+        JdbcBatchItemWriter<Transaction> writer = threadLocalWriter.get();
+        if (writer == null) {
+            writer = new JdbcBatchItemWriterBuilder<Transaction>()
+                    .dataSource(dataSource)
                     .sql(INSERT_TRANSACTION_SQL)
                     .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
                     .build();
-
-            delegate.afterPropertiesSet();
-
+            try {
+                writer.afterPropertiesSet();
+            } catch (Exception e) {
+                throw new IllegalStateException("Failed to initialize writer", e);
+            }
+            threadLocalWriter.set(writer);
         }
+        return writer;
     }
 
     @Override
     public void write(Chunk<? extends Transaction> chunk) throws Exception {
-        initDelegate(); // Ensure the delegate is initialized
-        delegate.write(chunk);
+        getWriter().write(chunk);
     }
 }

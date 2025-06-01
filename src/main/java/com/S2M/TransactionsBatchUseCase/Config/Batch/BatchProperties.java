@@ -28,14 +28,10 @@ public class BatchProperties {
 
     private String TransactionInputFile ="C:/Users/msi/Desktop/New folder (3)/TransactionsBatchUseCase/src/main/resources/transactions_part1.csv" ;
 
-    private String feeInfoInputFile ="C:/Users/msi/Downloads/TransactionsBatchUseCase (1)/TransactionsBatchUseCase/src/main/resources/fees_generated.csv";
+    private String feeInfoInputFile ="C:/Users/msi/Desktop/New folder (3)/TransactionsBatchUseCase/src/main/resources/fees_generated.csv";
+    
 
-
-    private int corePoolSize = 10 ;
-
-    private int maxPoolSize = 30 ;
-
-    private int CSVChunkSize = 10 ;
+    private int CSVChunkSize = 3 ;
 
 
 }

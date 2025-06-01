@@ -37,17 +37,19 @@ public class MainBatchJobConfig {
 
        log.info("hikariMaxConnections {}", hikariMaxConnections);
 
+       int safeMaxThreads = Math.min(systemCapacityMaxThreads, hikariMaxConnections-1);
 
-       taskExecutor.setMaxPoolSize(systemCapacityMaxThreads);
+       taskExecutor.setMaxPoolSize(safeMaxThreads);
 
-       taskExecutor.setCorePoolSize(Math.min(hikariMaxConnections-1, systemCapacityMaxThreads));
 
-       log.info("CorePoolSize : {}", Math.min(hikariMaxConnections-1, systemCapacityMaxThreads));
+       taskExecutor.setCorePoolSize(safeMaxThreads);
+
+       log.info("CorePoolSize : {}", safeMaxThreads);
 
        // Queue capacity: How many tasks can wait if all maxPoolSize threads are busy.
        // A larger queue allows more partitions to be generated and queued up by the partitioner
        // without overwhelming the immediate thread pool.
-       taskExecutor.setQueueCapacity(systemCapacityMaxThreads * 5); // e.g., 16 * 5 = 80
+       taskExecutor.setQueueCapacity(safeMaxThreads * 5); // e.g., 16 * 5 = 80
 
 
        taskExecutor.setThreadNamePrefix("partition-worker-");
@@ -57,7 +59,7 @@ public class MainBatchJobConfig {
        return taskExecutor;
    }
 
-   
+
 
     @Bean("walletActivityReportingJob")
     public Job walletActivityReportingJob(

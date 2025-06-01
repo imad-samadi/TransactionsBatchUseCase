@@ -9,10 +9,12 @@ import com.S2M.TransactionsBatchUseCase.Writer.TransactionJdbcWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemStreamReader;
+import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
@@ -79,23 +81,23 @@ public class TransactionFileReaderConfig {
         return readerFactory.createReader(tokenizer, mapper);
     }
 
+
     @Bean
-    public TransactionJdbcWriter transactionItemWriter(DataSource dataSource) {
-        // The DataSource will be auto-injected by Spring
+    public ItemWriter<Transaction> transactionItemWriter(DataSource dataSource) {
         return new TransactionJdbcWriter(dataSource);
     }
 
     @Bean("writeTransactionStep")
     public Step writeTransactionStep(JobRepository jobRepository,
                                      PlatformTransactionManager transactionManager,
-                                     @Qualifier("transactionFileReader") ItemReader<Transaction> reader,
-                                     //@Qualifier("threadSafeTransactionReader") ItemStreamReader<Transaction> reader,
-                                     TransactionJdbcWriter writer) {
+                                     //@Qualifier("transactionFileReader") ItemReader<Transaction> reader,
+                                     @Qualifier("threadSafeTransactionReader") ItemStreamReader<Transaction> reader,
+                                     ItemWriter<Transaction> writer) {
         return new StepBuilder("writeTransactionStep", jobRepository)
                 .<Transaction, Transaction>chunk(batchProperties.getCSVChunkSize(), transactionManager)
                 .reader(reader)
                 .writer(writer)
-                //.taskExecutor(partitionTaskExecutor)
+                .taskExecutor(partitionTaskExecutor)
                 .listener(new LoggingStepListener())
                 .listener(new LoggingSkipListener())
                 .listener(new CSVWriteListener())
