@@ -30,7 +30,7 @@ public class CurrencyForAggregationPartitioner implements Partitioner {
             context.putString("aggregationCurrency", currency);
             // Ensure partition names are unique and valid
             result.put("agg_partition_" + sanitizeForPartitionName(currency) + "_" + i++, context);
-            log.debug("Created aggregation partition for currency: {}", currency);
+            log.info("Created aggregation partition for currency: {}", currency);
         }
         return result;
     }

@@ -127,7 +127,7 @@ public class ReportCalculationService {
         initializeEmptyGlobalReport(gr, currency);
 
         if (transactions == null || transactions.isEmpty()) {
-            log.info("Transactions list is empty");
+            log.warn("Transactions list is empty");
             return gr;
         }
 

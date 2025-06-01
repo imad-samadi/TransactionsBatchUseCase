@@ -30,12 +30,14 @@ public class MainBatchJobConfig {
         ThreadPoolTaskExecutor exec = new ThreadPoolTaskExecutor();
 
         int cpuCores = Runtime.getRuntime().availableProcessors();
-
+        log.info("cpuCores: {}", cpuCores);
         int corePool = cpuCores;
         int maxPool  = Math.min(hikariMaxConnections, cpuCores * 2);
 
         exec.setCorePoolSize(corePool);          // e.g. 8 on an 8-core box
+        log.info("corePool: {}", corePool);
         exec.setMaxPoolSize(maxPool);            // e.g. min(20,16) = 16 if Hikari=20
+        log.info("maxPool: {}", maxPool);
 
         //10-slot queue so that after 16 active threads, up to 10 more tasks wait here
         exec.setQueueCapacity(10);

@@ -72,10 +72,9 @@ public class ReportJobRunner implements CommandLineRunner {
                 .toJobParameters();
 
         try {
-            log.info("Launching job with parameters: {}", jobParameters);
+
             org.springframework.batch.core.JobExecution jobExecution = jobLauncher.run(walletActivityReportingJob, jobParameters);
-            log.info("Job Execution Status: {}", jobExecution.getStatus());
-            log.info("Job Exit Status: {}", jobExecution.getExitStatus().getExitCode());
+
         } catch (JobExecutionAlreadyRunningException e) {
             log.error("JobExecutionAlreadyRunningException: Job is already running.", e);
         } catch (JobRestartException e) {

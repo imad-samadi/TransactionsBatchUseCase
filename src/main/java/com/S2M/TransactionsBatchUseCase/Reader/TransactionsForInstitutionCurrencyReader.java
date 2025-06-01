@@ -34,13 +34,10 @@ public class TransactionsForInstitutionCurrencyReader implements ItemReader<List
         }
 
         EntityManager em = entityManagerFactory.createEntityManager();
-        log.debug("Reading transactions for - SessionId: {}, CenterId: {}, ProcessingCurrency: {}, ProcessingInstitutionId: {}",
-                sessionId, centerId, processingCurrency, processingInstitutionId);
+       // log.debug("Reading transactions for - SessionId: {}, CenterId: {}, ProcessingCurrency: {}, ProcessingInstitutionId: {}",
+              //  sessionId, centerId, processingCurrency, processingInstitutionId);
         try {
-            // JPQL query to fetch transactions for the current institution and currency,
-            // including those where the institution is either the debitor or the creditor.
-            // Eagerly fetch 'feeInfo' to avoid N+1 query problems later in the processor.
-            // IMPORTANT: Verify your entity and attribute names in the query.
+
             String jpql = "SELECT t FROM Transaction t LEFT JOIN FETCH t.feeInfo " +
                     "WHERE t.sessionId = :sessionId AND t.centerId = :centerId " +
                     "AND t.transactionCurrency = :currency " +
@@ -61,12 +58,11 @@ public class TransactionsForInstitutionCurrencyReader implements ItemReader<List
                 return null; // Return null if no transactions, ItemProcessor will not be called.
             }
 
-            log.info("Fetched {} transactions for - SessionId: {}, CenterId: {}, ProcessingCurrency: {}, ProcessingInstitutionId: {}",
-                    transactions.size(), sessionId, centerId, processingCurrency, processingInstitutionId);
+          //  log.info("Fetched {} transactions for - SessionId: {}, CenterId: {}, ProcessingCurrency: {}, ProcessingInstitutionId: {}",
+                 //   transactions.size(), sessionId, centerId, processingCurrency, processingInstitutionId);
             return transactions; // Return the entire list as a single item.
         } catch (Exception e) {
-            // Log the error and rethrow as a runtime exception to fail the step/job
-            // Spring Batch's fault tolerance can then handle it based on configuration.
+
             log.error("Error reading transactions for - SessionId: {}, CenterId: {}, ProcessingCurrency: {}, ProcessingInstitutionId: {}",
                     sessionId, centerId, processingCurrency, processingInstitutionId, e);
             throw new RuntimeException("Failed to read transactions for partition", e);

@@ -28,7 +28,7 @@ public class SettlementReportGeneratorProcessor implements ItemProcessor<List<Tr
                     sessionId, centerId, processingCurrency, processingInstitutionId);
             return null; // Spring Batch will skip writing a null item
         }
-        log.info("Processing {} transactions for SettlementReport (Session: {}, Center: {}, Currency: {}, Institution: {})",
+       log.info("Processing {} transactions for SettlementReport (Session: {}, Center: {}, Currency: {}, Institution: {})",
                 transactions.size(), sessionId, centerId, processingCurrency, processingInstitutionId);
 
         try {

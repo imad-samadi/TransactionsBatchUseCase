@@ -30,7 +30,7 @@ public class SettlementReportsForCurrencyAggregatorReader implements ItemReader<
             return null; // Read only once per partition execution
         }
         EntityManager em = entityManagerFactory.createEntityManager();
-        log.info("Reading SettlementReports for aggregation. SessionId: {}, Currency: {}", sessionId, aggregationCurrency);
+        //log.info("Reading SettlementReports for aggregation. SessionId: {}, Currency: {}", sessionId, aggregationCurrency);
         try {
 
             // Fetch the main entity, the one-to-one globalReport, and ONE List (bag) collection.
@@ -57,7 +57,7 @@ public class SettlementReportsForCurrencyAggregatorReader implements ItemReader<
                 log.debug("No unaggregated SettlementReports found for SessionId: {}, Currency: {}", sessionId, aggregationCurrency);
                 return null; // Processor will not be called for this partition
             }
-            log.info("Fetched {} SettlementReports for aggregation. Currency: {}", reports.size(), aggregationCurrency);
+           // log.info("Fetched {} SettlementReports for aggregation. Currency: {}", reports.size(), aggregationCurrency);
             return reports; // Return the list as a single item
         } catch (Exception e) {
             log.error("Error reading settlement reports for aggregation. SessionId: {}, Currency: {}. Error: {}",

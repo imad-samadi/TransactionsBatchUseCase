@@ -33,7 +33,7 @@ public class CurrencyInstitutionPartitioner implements Partitioner {
                     "_I" + sanitizeForPartitionName(pair.getInstitutionId()) +
                     "_" + partitionNumber++;
             result.put(partitionName, context);
-            log.debug("Created partition {} for Currency: {}, Institution: {}",
+            log.info("Created partition {} for Currency: {}, Institution: {}",
                     partitionName, pair.getCurrency(), pair.getInstitutionId());
         }
         return result;
