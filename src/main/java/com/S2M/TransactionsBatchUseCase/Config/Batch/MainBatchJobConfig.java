@@ -1,9 +1,11 @@
 package com.S2M.TransactionsBatchUseCase.Config.Batch;
 
+import com.S2M.TransactionsBatchUseCase.Listeners.LoggingJobListener;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
@@ -23,7 +25,8 @@ public class MainBatchJobConfig {
 
     private final BatchProperties batchProperties;
 
-    @Bean //strategy 2
+    @Bean//strategy 2
+    @StepScope //each partitioned step gets its own isolated thread pool
     public TaskExecutor partitionTaskExecutor(
             @Value("${spring.datasource.hikari.maximum-pool-size:20}") int hikariMaxConnections
     ) {
@@ -107,6 +110,7 @@ public class MainBatchJobConfig {
                 .start(determineWorkUnitsStep)
                 .next(generateAndSaveSettlementReportsManagerStep)
                 .next(aggregateReportsAndCreateWalletActivityManagerStep)
+                .listener(new LoggingJobListener())
 
                 .build();
     }

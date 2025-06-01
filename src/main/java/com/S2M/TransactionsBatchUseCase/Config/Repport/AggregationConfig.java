@@ -4,6 +4,7 @@ import com.S2M.TransactionsBatchUseCase.Config.Partition.CurrencyForAggregationP
 import com.S2M.TransactionsBatchUseCase.Config.Partition.DetermineCurrencyInstitutionPairsTasklet;
 import com.S2M.TransactionsBatchUseCase.Entity.Repport.SettlementReport;
 import com.S2M.TransactionsBatchUseCase.Entity.Repport.WalletActivityReport;
+import com.S2M.TransactionsBatchUseCase.Listeners.*;
 import com.S2M.TransactionsBatchUseCase.Processor.WalletActivityReportBuilderProcessor;
 import com.S2M.TransactionsBatchUseCase.Reader.SettlementReportsForCurrencyAggregatorReader;
 import jakarta.persistence.EntityManagerFactory;
@@ -73,6 +74,10 @@ public class AggregationConfig {
                 .reader(settlementReportsForCurrencyAggregatorReader)
                 .processor(walletActivityReportBuilderProcessor)
                 .writer(walletActivityReportWriter)
+                .listener(new LoggingStepListener())
+                .listener(new LoggingSkipListener())
+                .listener(new WalletActivityReportWriteListener())
+
                 .build();
     }
 

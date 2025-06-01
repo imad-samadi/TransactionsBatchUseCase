@@ -2,6 +2,10 @@ package com.S2M.TransactionsBatchUseCase.Config.CSV;
 
 import com.S2M.TransactionsBatchUseCase.Config.Batch.BatchProperties;
 import com.S2M.TransactionsBatchUseCase.Entity.Repport.Trasaction.Transaction;
+import com.S2M.TransactionsBatchUseCase.Listeners.LoggingSkipListener;
+import com.S2M.TransactionsBatchUseCase.Listeners.LoggingStepListener;
+import com.S2M.TransactionsBatchUseCase.Listeners.PerThreadCountingWriteListener;
+import com.S2M.TransactionsBatchUseCase.Listeners.SimpleChunkListener;
 import com.S2M.TransactionsBatchUseCase.Reader.CSV.GenericCsvReaderFactory;
 import com.S2M.TransactionsBatchUseCase.Reader.CSV.Mapper.TransactionFileFieldSetMapper;
 import com.S2M.TransactionsBatchUseCase.Writer.TransactionJdbcWriter;
@@ -84,8 +88,11 @@ public class TransactionFileReaderConfig {
         return new StepBuilder("writeTransactionStep", jobRepository)
                 .<Transaction, Transaction>chunk(100, transactionManager)
                 .reader(reader)
-
                 .writer(writer)
+                .listener(new LoggingStepListener())
+                .listener(new LoggingSkipListener())
+                .listener(new PerThreadCountingWriteListener())
+                .listener(new SimpleChunkListener())
                 .build();
     }
 }

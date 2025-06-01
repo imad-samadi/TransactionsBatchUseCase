@@ -5,6 +5,10 @@ import com.S2M.TransactionsBatchUseCase.Config.Partition.DetermineCurrencyInstit
 import com.S2M.TransactionsBatchUseCase.DTO.CurrencyInstitutionPair;
 import com.S2M.TransactionsBatchUseCase.Entity.Repport.SettlementReport;
 import com.S2M.TransactionsBatchUseCase.Entity.Repport.Trasaction.Transaction;
+import com.S2M.TransactionsBatchUseCase.Listeners.LoggingSkipListener;
+import com.S2M.TransactionsBatchUseCase.Listeners.LoggingStepListener;
+import com.S2M.TransactionsBatchUseCase.Listeners.PerThreadCountingWriteListener;
+import com.S2M.TransactionsBatchUseCase.Listeners.SimpleChunkListener;
 import com.S2M.TransactionsBatchUseCase.Processor.SettlementReportGeneratorProcessor;
 import com.S2M.TransactionsBatchUseCase.Reader.TransactionsForInstitutionCurrencyReader;
 import com.S2M.TransactionsBatchUseCase.Repo.SettlementReportRepository;
@@ -124,9 +128,10 @@ public class SettlementReportBatchConfig {
                 .reader(transactionsForInstitutionCurrencyReader)
                 .processor(settlementReportGeneratorProcessor)
                 .writer(settlementReportWriter)
-                .faultTolerant()
-                .skipLimit(10)
-                .skip(Exception.class)
+                .listener(new LoggingStepListener())
+                .listener(new LoggingSkipListener())
+                .listener(new PerThreadCountingWriteListener())
+
                 .build();
     }
 

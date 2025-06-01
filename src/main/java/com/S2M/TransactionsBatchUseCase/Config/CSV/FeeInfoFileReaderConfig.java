@@ -1,6 +1,10 @@
 package com.S2M.TransactionsBatchUseCase.Config.CSV;
 import com.S2M.TransactionsBatchUseCase.Config.Batch.BatchProperties;
 import com.S2M.TransactionsBatchUseCase.Entity.Repport.Trasaction.FeeInfo;
+import com.S2M.TransactionsBatchUseCase.Listeners.LoggingSkipListener;
+import com.S2M.TransactionsBatchUseCase.Listeners.LoggingStepListener;
+import com.S2M.TransactionsBatchUseCase.Listeners.PerThreadCountingWriteListener;
+import com.S2M.TransactionsBatchUseCase.Listeners.SimpleChunkListener;
 import com.S2M.TransactionsBatchUseCase.Writer.FeeInfoJdbcWriter;
 import com.S2M.TransactionsBatchUseCase.Reader.CSV.GenericCsvReaderFactory;
 import com.S2M.TransactionsBatchUseCase.Reader.CSV.Mapper.FeeInfoFileFieldSetMapper;
@@ -78,6 +82,10 @@ public class FeeInfoFileReaderConfig {
                 .<FeeInfo, FeeInfo>chunk(100, transactionManager)
                 .reader(feeInfoReader)
                 .writer(feeInfoWriter)
+                .listener(new LoggingStepListener())
+                .listener(new LoggingSkipListener())
+                .listener(new PerThreadCountingWriteListener())
+                .listener(new SimpleChunkListener())
                 .build();
     }
 }
