@@ -1,4 +1,4 @@
-package com.S2M.TransactionsBatchUseCase.Reader;
+package com.S2M.TransactionsBatchUseCase.Reader.CSV;
 
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
