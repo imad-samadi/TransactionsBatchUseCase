@@ -1,0 +1,23 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'DPH Batch'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8080']
+    scrape_interval: 1s
+
+  - job_name: 'springCloudData'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:9393']
+    scrape_interval: 5s
+
+  - job_name: 'DPH CSV IMPORT'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ 'host.docker.internal:8081']
+    scrape_interval: 5s
+
+

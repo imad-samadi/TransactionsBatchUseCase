@@ -1,0 +1,80 @@
+#spring:
+#  datasource:
+#    url: jdbc:oracle:thin:@//10.0.24.4:1540/PSSQLF
+#    username: NXP_DPH_REGULATION_BATCH
+#    password: nxp
+#    driver-class-name: oracle.jdbc.OracleDriver
+#    hikari:
+#      maximum-pool-size: 10
+#      minimum-idle: 2
+#  jpa:
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.OracleDialect
+
+
+spring:
+
+  application:
+    name: "DPH CSV IMPORT"
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/DPHV2    #testPerforV2
+    username: postgres
+    password: imad
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 15
+
+  cloud:
+    task:
+      initialize-enabled: true
+
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+
+
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled: true
+
+
+
+
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus,health,metrics
+  metrics:
+    tags:
+      application: ${spring.application.name}
+      environment: local
+    enable:
+      batch  : true
+    distribution:
+      percentiles-histogram:
+        spring :
+          batch : true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+server:
+  port: 8081
+
