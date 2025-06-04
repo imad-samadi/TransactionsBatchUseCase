@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: "DataFlowServer"
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/DataFlowDB
+    username: postgres
+    password: imad
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  cloud:
+    dataflow:
+      features:
+        streams-enabled: false
+        tasks-enabled: true
+        schedules-enabled: true
+      metrics:
+        dashboard:
+          url: "http://localhost:3000"  # Grafana URL (for UI reference)
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"  # Expose all endpoints (or list specific ones like health,info,prometheus)
+      base-path: /actuator  # Explicitly set the base path (optional)
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
