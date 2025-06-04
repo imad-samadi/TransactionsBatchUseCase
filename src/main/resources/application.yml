@@ -16,7 +16,7 @@
 spring:
 
   application:
-    name: "transactions"
+    name: "DPH Batch"
 
   datasource:
     url: jdbc:postgresql://localhost:5433/DPHV2    #testPerforV2
@@ -24,7 +24,11 @@ spring:
     password: imad
     driver-class-name: org.postgresql.Driver
     hikari:
-      maximum-pool-size: 7
+      maximum-pool-size: 20
+
+  cloud:
+    task:
+      initialize-enabled: true
 
 
   jpa:
@@ -47,6 +51,34 @@ spring:
     job:
       enabled: false
 
+
+
+
+
 batch:
   center-id: 1
   session-id: 1
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus,health,metrics
+  metrics:
+    tags:
+      application: ${spring.application.name}
+      environment: local
+    enable:
+      batch  : true
+    distribution:
+      percentiles-histogram:
+        spring :
+          batch : true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+
+

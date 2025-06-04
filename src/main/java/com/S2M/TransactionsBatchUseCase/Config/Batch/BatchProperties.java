@@ -24,14 +24,8 @@ public class BatchProperties {
     private String sessionId;
 
     @NotBlank
-    private String centerId;
+    private String centerId ;
 
-    private String TransactionInputFile ="C:/Users/msi/Desktop/New folder (3)/TransactionsBatchUseCase/src/main/resources/transactions_part1.csv" ;
-
-    private String feeInfoInputFile ="C:/Users/msi/Desktop/New folder (3)/TransactionsBatchUseCase/src/main/resources/fees_generated.csv";
-    
-
-    private int CSVChunkSize = 3 ;
 
 
 }

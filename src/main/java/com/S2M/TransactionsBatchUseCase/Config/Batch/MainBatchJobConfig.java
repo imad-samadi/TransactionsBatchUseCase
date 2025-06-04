@@ -56,6 +56,11 @@ public class MainBatchJobConfig {
        taskExecutor.setAllowCoreThreadTimeOut(true); // Allow core threads to terminate if idle for too long
        taskExecutor.setKeepAliveSeconds(60);       // How long core threads can be idle before terminating
        taskExecutor.initialize();
+       taskExecutor.setThreadFactory(r -> {
+           Thread t = new Thread(r);
+           t.setDaemon(true);
+           return t;
+       });
        return taskExecutor;
    }
 
@@ -65,8 +70,8 @@ public class MainBatchJobConfig {
     public Job walletActivityReportingJob(
             JobRepository jobRepository,
 
-            @Qualifier("writeTransactionStep") Step writeTransactionStep,
-            @Qualifier("processFeeInfoFileStep") Step processFeeInfoFileStep,
+           // @Qualifier("writeTransactionStep") Step writeTransactionStep,
+            // @Qualifier("processFeeInfoFileStep") Step processFeeInfoFileStep,
 
             @Qualifier("determineWorkUnitsStep") Step determineWorkUnitsStep,
             @Qualifier("generateAndSaveSettlementReportsManagerStep") Step generateAndSaveSettlementReportsManagerStep,
@@ -74,9 +79,8 @@ public class MainBatchJobConfig {
     ) {
         return new JobBuilder("walletActivityReportingJob", jobRepository)
                 .incrementer(new RunIdIncrementer())
-                .start(writeTransactionStep)
-                .next(processFeeInfoFileStep)
-                .next(determineWorkUnitsStep)
+
+                .start(determineWorkUnitsStep)
                 .next(generateAndSaveSettlementReportsManagerStep)
                 .next(aggregateReportsAndCreateWalletActivityManagerStep)
                 .listener(new LoggingJobListener())
