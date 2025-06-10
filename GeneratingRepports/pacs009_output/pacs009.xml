@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:Document xmlns:ns2="urn:iso:std:iso:20022:tech:xsd:pacs.009.001.08">
+    <GrpHdr>
+        <MsgId>MSG-c0140760-c56d-42a9-b67c-4d703198f9df</MsgId>
+        <CreDtTm>2025-06-10T13:01:23.2655751</CreDtTm>
+    </GrpHdr>
+    <CdtTrfTxInf Ccy="LBC">
+        <DbtrAgt>BANK04</DbtrAgt>
+        <CdtrAgt>CENTRALBANKLYBXXX</CdtrAgt>
+        <IntrBkSttlmAmt>926.66</IntrBkSttlmAmt>
+        <IntrBkSttlmDt>2025-06-10</IntrBkSttlmDt>
+    </CdtTrfTxInf>
+    <CdtTrfTxInf Ccy="USD">
+        <DbtrAgt>BANK04</DbtrAgt>
+        <CdtrAgt>CENTRALBANKLYBXXX</CdtrAgt>
+        <IntrBkSttlmAmt>828.34</IntrBkSttlmAmt>
+        <IntrBkSttlmDt>2025-06-10</IntrBkSttlmDt>
+    </CdtTrfTxInf>
+    <CdtTrfTxInf Ccy="LBC">
+        <DbtrAgt>CENTRALBANKLYBXXX</DbtrAgt>
+        <CdtrAgt>BANK02</CdtrAgt>
+        <IntrBkSttlmAmt>922.66</IntrBkSttlmAmt>
+        <IntrBkSttlmDt>2025-06-10</IntrBkSttlmDt>
+    </CdtTrfTxInf>
+    <CdtTrfTxInf Ccy="MAD">
+        <DbtrAgt>BANK04</DbtrAgt>
+        <CdtrAgt>CENTRALBANKLYBXXX</CdtrAgt>
+        <IntrBkSttlmAmt>669.96</IntrBkSttlmAmt>
+        <IntrBkSttlmDt>2025-06-10</IntrBkSttlmDt>
+    </CdtTrfTxInf>
+    <CdtTrfTxInf Ccy="MAD">
+        <DbtrAgt>CENTRALBANKLYBXXX</DbtrAgt>
+        <CdtrAgt>BANK02</CdtrAgt>
+        <IntrBkSttlmAmt>665.90</IntrBkSttlmAmt>
+        <IntrBkSttlmDt>2025-06-10</IntrBkSttlmDt>
+    </CdtTrfTxInf>
+    <CdtTrfTxInf Ccy="USD">
+        <DbtrAgt>CENTRALBANKLYBXXX</DbtrAgt>
+        <CdtrAgt>BANK07</CdtrAgt>
+        <IntrBkSttlmAmt>320.97</IntrBkSttlmAmt>
+        <IntrBkSttlmDt>2025-06-10</IntrBkSttlmDt>
+    </CdtTrfTxInf>
+    <CdtTrfTxInf Ccy="MAD">
+        <DbtrAgt>BANK03</DbtrAgt>
+        <CdtrAgt>CENTRALBANKLYBXXX</CdtrAgt>
+        <IntrBkSttlmAmt>2.97</IntrBkSttlmAmt>
+        <IntrBkSttlmDt>2025-06-10</IntrBkSttlmDt>
+    </CdtTrfTxInf>
+    <CdtTrfTxInf Ccy="USD">
+        <DbtrAgt>CENTRALBANKLYBXXX</DbtrAgt>
+        <CdtrAgt>BANK01</CdtrAgt>
+        <IntrBkSttlmAmt>940.10</IntrBkSttlmAmt>
+        <IntrBkSttlmDt>2025-06-10</IntrBkSttlmDt>
+    </CdtTrfTxInf>
+    <CdtTrfTxInf Ccy="EUR">
+        <DbtrAgt>BANK02</DbtrAgt>
+        <CdtrAgt>CENTRALBANKLYBXXX</CdtrAgt>
+        <IntrBkSttlmAmt>40.73</IntrBkSttlmAmt>
+        <IntrBkSttlmDt>2025-06-10</IntrBkSttlmDt>
+    </CdtTrfTxInf>
+    <CdtTrfTxInf Ccy="USD">
+        <DbtrAgt>BANK03</DbtrAgt>
+        <CdtrAgt>CENTRALBANKLYBXXX</CdtrAgt>
+        <IntrBkSttlmAmt>993.14</IntrBkSttlmAmt>
+        <IntrBkSttlmDt>2025-06-10</IntrBkSttlmDt>
+    </CdtTrfTxInf>
+    <CdtTrfTxInf Ccy="USD">
+        <DbtrAgt>BANK05</DbtrAgt>
+        <CdtrAgt>CENTRALBANKLYBXXX</CdtrAgt>
+        <IntrBkSttlmAmt>335.20</IntrBkSttlmAmt>
+        <IntrBkSttlmDt>2025-06-10</IntrBkSttlmDt>
+    </CdtTrfTxInf>
+    <CdtTrfTxInf Ccy="USD">
+        <DbtrAgt>CENTRALBANKLYBXXX</DbtrAgt>
+        <CdtrAgt>BANK02</CdtrAgt>
+        <IntrBkSttlmAmt>895.88</IntrBkSttlmAmt>
+        <IntrBkSttlmDt>2025-06-10</IntrBkSttlmDt>
+    </CdtTrfTxInf>
+    <CdtTrfTxInf Ccy="EUR">
+        <DbtrAgt>CENTRALBANKLYBXXX</DbtrAgt>
+        <CdtrAgt>BANK05</CdtrAgt>
+        <IntrBkSttlmAmt>44.04</IntrBkSttlmAmt>
+        <IntrBkSttlmDt>2025-06-10</IntrBkSttlmDt>
+    </CdtTrfTxInf>
+</ns2:Document>

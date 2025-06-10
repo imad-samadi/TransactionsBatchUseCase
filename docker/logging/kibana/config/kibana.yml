@@ -1,0 +1,12 @@
+# logging/kibana/config/kibana.yml
+# Configuration pour Kibana
+
+# Lie Kibana à toutes les interfaces réseau
+server.host: "0.0.0.0"
+
+# L'URL d'Elasticsearch. Utilisez le nom du service Docker.
+# Kibana se connectera à cet hôte sur le réseau logging_network.
+elasticsearch.hosts: [ "http://elasticsearch:9200" ]
+
+# Timeout pour les requêtes Kibana
+server.shutdownTimeout: "5s"

@@ -1,0 +1,9 @@
+# logging/elasticsearch/config/elasticsearch.yml
+# Configuration minimale pour Elasticsearch dans Docker
+
+# Le nom du cluster est important pour la reconnaissance
+cluster.name: "docker-cluster"
+
+# Lie Elasticsearch à toutes les interfaces réseau
+# C'est nécessaire pour qu'il soit accessible par les autres services Docker
+network.host: 0.0.0.0

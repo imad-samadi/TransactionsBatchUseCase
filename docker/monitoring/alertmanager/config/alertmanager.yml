@@ -1,0 +1,44 @@
+route:
+  # Configuration de base du routage d'alertes
+  receiver: 'email-notifications'
+  group_wait: 30s          # Temps d'attente avant le premier envoi d'une alerte groupée
+  group_interval: 5m       # Intervalle entre envois pour un groupe d'alertes
+  repeat_interval: 4h      # Intervalle de répétition pour les alertes non résolues
+  group_by: ['alertname', 'severity']  # Regrouper les alertes par nom et sévérité
+
+  # Routes spécifiques
+  routes:
+    # Route pour les alertes critiques (envoi plus rapide)
+    - match:
+        severity: critical
+      receiver: 'email-notifications'
+      group_wait: 10s        # Attente plus courte pour alertes critiques
+      repeat_interval: 1h    # Répétition plus fréquente pour alertes critiques
+
+    # Route pour les alertes informatives
+    - match:
+        severity: info
+      receiver: 'email-notifications'
+      group_wait: 1m         # Plus de délai pour informations
+      repeat_interval: 12h   # Répétition moins fréquente
+
+# Définition des récepteurs d'alertes
+receivers:
+  # Configuration de l'envoi par email
+  - name: 'email-notifications'
+    email_configs:
+      - smarthost: 'smtp.gmail.com:587'
+        auth_username: 'abdennour.erraji04@gmail.com'
+        auth_password: "wllvmkteoqsivfih"  # Utiliser plutôt une variable d'environnement
+        from: 'abdennour.erraji04@gmail.com'
+        to: 'abdorajia2001@gmail.com'
+        require_tls: true
+        headers:
+          subject: '[{{ .Status | toUpper }}] Alerte: {{ .GroupLabels.alertname }} (Sévérité: {{ .CommonLabels.severity | toUpper }})'
+        html: '{{ template "email.html" . }}'  # Template HTML pour les alertes
+
+# Templates personnalisés pour les alertes
+templates:
+  - '/etc/alertmanager/templates/*.tmpl'
+
+

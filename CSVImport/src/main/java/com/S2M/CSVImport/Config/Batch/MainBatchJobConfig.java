@@ -1,4 +1,4 @@
-package com.S2M.CSVImport.Config;
+package com.S2M.CSVImport.Config.Batch;
 
 import com.S2M.CSVImport.Listeners.LoggingJobListener;
 import lombok.AllArgsConstructor;

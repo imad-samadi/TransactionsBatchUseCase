@@ -34,10 +34,98 @@ services:
     depends_on:
       - prometheus
 
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: alertmanager
+    restart: unless-stopped
+    volumes:
+      - ./monitoring/alertmanager/config/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - ./monitoring/alertmanager/templates:/etc/alertmanager/templates:ro
+      - alertmanager_data:/data
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/data'
+    ports:
+      - "${ALERTMANAGER_PORT:-9093}:9093"
+    networks:
+      - monitoring
+    depends_on:
+      - prometheus
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.20
+    container_name: elasticsearch
+    environment:
+      - node.name=elasticsearch
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - ES_JAVA_OPTS=-Xms${ES_JVM_HEAP:-512m} -Xmx${ES_JVM_HEAP:-512m}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./logging/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - "${ELASTICSEARCH_PORT:-9200}:9200"
+    networks:
+      - logging_network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9200" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.15.2
+    container_name: logstash
+    volumes:
+      - ./logging/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./logging/logstash/pipeline:/usr/share/logstash/pipeline:ro
+      - ./logging/logstash/logs:/usr/share/logstash/logs
+    ports:
+      - "${LOGSTASH_PORT:-5000}:5000"
+    environment:
+      - LS_JAVA_OPTS=-Xmx${LS_JVM_HEAP:-256m} -Xms${LS_JVM_HEAP:-256m}
+    networks:
+      - logging_network
+    depends_on:
+      - elasticsearch
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9600" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.15.2
+    container_name: kibana
+    volumes:
+      - ./logging/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+    ports:
+      - "${KIBANA_PORT:-5601}:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - NODE_OPTIONS=--max-old-space-size=${KIBANA_NODE_MEM:-2048}
+    networks:
+      - logging_network
+    depends_on:
+      - elasticsearch
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:5601/api/status" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
 volumes:
   prometheus_data:
   grafana_data:
+  alertmanager_data:
+  elasticsearch_data:
 
 networks:
   monitoring:
+    driver: bridge
+  logging_network:
     driver: bridge

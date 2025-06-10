@@ -1,12 +1,12 @@
 package com.S2M.CSVImport.Config.CSV;
 
-import com.S2M.CSVImport.Config.BatchProperties;
+import com.S2M.CSVImport.Config.Batch.BatchProperties;
 import com.S2M.CSVImport.Entity.Trasaction.FeeInfo;
 import com.S2M.CSVImport.Listeners.CSVWriteListener;
 import com.S2M.CSVImport.Listeners.LoggingSkipListener;
 import com.S2M.CSVImport.Listeners.LoggingStepListener;
 import com.S2M.CSVImport.Reader.CSV.GenericCsvReaderFactory;
-import com.S2M.CSVImport.Reader.CSV.Mapper.FeeInfoFileFieldSetMapper;
+import com.S2M.CSVImport.Mapper.FeeInfoFileFieldSetMapper;
 import com.S2M.CSVImport.Writer.FeeInfoJdbcWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;

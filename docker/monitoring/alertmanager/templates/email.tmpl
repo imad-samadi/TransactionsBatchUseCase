@@ -1,0 +1,27 @@
+{{ define "email.html" }}
+<h2>{{ .Status | toUpper }}: {{ .GroupLabels.alertname }}</h2>
+<p><strong>Sévérité:</strong> {{ .CommonLabels.severity | toUpper }}</p>
+<p><strong>Début (UTC):</strong> {{ range .Alerts }}{{ .StartsAt.Format "02-01-2006 15:04:05" }} UTC{{ break }}{{ end }}</p>
+{{ if eq .Status "resolved" }}
+<p><strong>Résolution (UTC):</strong> {{ range .Alerts }}{{ .EndsAt.Format "02-01-2006 15:04:05" }} UTC{{ break }}{{ end }}</p>
+{{ end }}
+<h3>Détails des alertes</h3>
+<table style="border-collapse: collapse; width: 100%;">
+  <tr style="background-color: #f2f2f2;">
+    <th style="border: 1px solid black; padding: 8px;">Sévérité</th>
+    <th style="border: 1px solid black; padding: 8px;">Résumé</th>
+    <th style="border: 1px solid black; padding: 8px;">Description</th>
+    <th style="border: 1px solid black; padding: 8px;">Début (UTC)</th>
+    {{ if eq .Status "resolved" }}<th style="border: 1px solid black; padding: 8px;">Fin (UTC)</th>{{ end }}
+  </tr>
+  {{ range .Alerts }}
+  <tr>
+    <td style="border: 1px solid black; padding: 8px;">{{ .Labels.severity | toUpper }}</td>
+    <td style="border: 1px solid black; padding: 8px;">{{ .Annotations.summary }}</td>
+    <td style="border: 1px solid black; padding: 8px;">{{ .Annotations.description }}</td>
+    <td style="border: 1px solid black; padding: 8px;">{{ .StartsAt.Format "15:04:05" }} UTC</td>
+    {{ if eq $.Status "resolved" }}<td style="border: 1px solid black; padding: 8px;">{{ .EndsAt.Format "15:04:05" }} UTC</td>{{ end }}
+  </tr>
+  {{ end }}
+</table>
+{{ end }}

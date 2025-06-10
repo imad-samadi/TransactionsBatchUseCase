@@ -1,13 +1,13 @@
 package com.S2M.CSVImport.Config.CSV;
 
 
-import com.S2M.CSVImport.Config.BatchProperties;
+import com.S2M.CSVImport.Config.Batch.BatchProperties;
 import com.S2M.CSVImport.Entity.Trasaction.Transaction;
 import com.S2M.CSVImport.Listeners.CSVWriteListener;
 import com.S2M.CSVImport.Listeners.LoggingSkipListener;
 import com.S2M.CSVImport.Listeners.LoggingStepListener;
 import com.S2M.CSVImport.Reader.CSV.GenericCsvReaderFactory;
-import com.S2M.CSVImport.Reader.CSV.Mapper.TransactionFileFieldSetMapper;
+import com.S2M.CSVImport.Mapper.TransactionFileFieldSetMapper;
 import com.S2M.CSVImport.Writer.TransactionJdbcWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +16,7 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemStreamReader;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.ParseException;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
@@ -100,6 +101,10 @@ public class TransactionFileReaderConfig {
                 .listener(new LoggingStepListener())
                 .listener(new LoggingSkipListener())
                 .listener(new CSVWriteListener())
+                .faultTolerant()
+                .processorNonTransactional()
+                .skip(ParseException.class)
+                .skipLimit(2)
                 //.listener(new SimpleChunkListener())
                 .build();
     }

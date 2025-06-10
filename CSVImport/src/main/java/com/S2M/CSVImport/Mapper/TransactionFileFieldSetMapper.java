@@ -1,4 +1,4 @@
-package com.S2M.CSVImport.Reader.CSV.Mapper;
+package com.S2M.CSVImport.Mapper;
 
 import com.S2M.CSVImport.Entity.Trasaction.Transaction;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;

@@ -4,6 +4,8 @@ import com.S2M.TransactionsBatchUseCase.Listeners.LoggingJobListener;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -75,7 +77,9 @@ public class MainBatchJobConfig {
 
             @Qualifier("determineWorkUnitsStep") Step determineWorkUnitsStep,
             @Qualifier("generateAndSaveSettlementReportsManagerStep") Step generateAndSaveSettlementReportsManagerStep,
-            @Qualifier("linkReportsToWalletActivityStep") Step aggregateReportsAndCreateWalletActivityStep
+            @Qualifier("linkReportsToWalletActivityStep") Step aggregateReportsAndCreateWalletActivityStep,
+            @Qualifier("generatePacs009XmlStep") Step generatePacs009XmlStep ,
+            @Qualifier("pacs009JobListener")JobExecutionListener pacs009JobListener
     ) {
         return new JobBuilder("walletActivityReportingJob", jobRepository)
                 .incrementer(new RunIdIncrementer())
@@ -83,7 +87,9 @@ public class MainBatchJobConfig {
                 .start(determineWorkUnitsStep)
                 .next(generateAndSaveSettlementReportsManagerStep)
                 .next(aggregateReportsAndCreateWalletActivityStep)
+                .next(generatePacs009XmlStep)
                 .listener(new LoggingJobListener())
+                .listener(pacs009JobListener)
 
                 .build();
     }
