@@ -36,7 +36,7 @@ public class Pacs009ItemWriter implements ItemWriter<Pacs009Message.Pacs009Messa
         message.setGrpHdr(header);
         message.setTransactions(itemsBuffer);
 
-        // ✅ Write to a normal folder: ./pacs009_output/
+
         File outputDir = new File("pacs009_output");
         outputDir.mkdirs(); // ensure the folder exists
 
@@ -48,6 +48,6 @@ public class Pacs009ItemWriter implements ItemWriter<Pacs009Message.Pacs009Messa
 
         marshaller.marshal(message, outputFile);
 
-        log.info("✅ pacs.009 XML written to: {}", outputFile.getAbsolutePath());
+        log.info("pacs.009 XML written to: {}", outputFile.getAbsolutePath());
     }
 }
